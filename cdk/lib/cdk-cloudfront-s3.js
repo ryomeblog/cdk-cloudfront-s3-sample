@@ -2,6 +2,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 
@@ -33,6 +34,13 @@ export class SampleCdkStack extends cdk.Stack {
     // 上記で作成したポリシーステートメントをS3バケットのリソースポリシーに追加します。
     bucket.addToResourcePolicy(policyStatement);
 
+    // バケットにウェブサイトのファイルをデプロイします。
+    // '../web/build'の位置にあるファイルがデプロイの対象となります。
+    new s3deploy.BucketDeployment(this, 'DeployWebsite', {
+      sources: [s3deploy.Source.asset('../web/build')],
+      destinationBucket: bucket,
+    });
+
     // CloudFrontディストリビューションを作成します。
     // ディストリビューションのOrigin（配信元）として、上記で作成したS3バケットを指定します。
     const distribution = new cloudfront.Distribution(this, 'SampleDistribution', {
@@ -42,5 +50,10 @@ export class SampleCdkStack extends cdk.Stack {
     // CloudFormationの出力としてCloudFrontのURLを指定します。
     // これにより、デプロイ後にこのURLを簡単に取得できます。
     new cdk.CfnOutput(this, 'CloudFrontURL', { value: `https://${distribution.distributionDomainName}` });
+    new cdk.CfnOutput(this, 'DistributionDomainName', { value: distribution.distributionDomainName });
+    // CloudFormationの出力としてCloudFrontのディストリビューションIDを指定します。
+    new cdk.CfnOutput(this, 'DistributionID', { value: distribution.distributionId });
+    // CloudFormationの出力としてS3バケット名を指定します。
+    new cdk.CfnOutput(this, 'BucketName', { value: bucket.bucketName });
   }
 }

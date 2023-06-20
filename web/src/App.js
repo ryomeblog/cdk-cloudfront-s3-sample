@@ -1,25 +1,66 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+  Link
+} from "react-router-dom";
 
-function App() {
+function NavigationHandler() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (window.location.hash.startsWith("")) {
+      const path = window.location.hash.substr(2);
+      const routes = ['/test', '/test2'];
+      if (routes.some(route => route === path)) {
+        navigate(path);
+      }
+    }
+  }, []);
+
+  return null;
+}
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <Router>
+      <div>
+        <NavigationHandler />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/test" element={<Test />} />
+          <Route path="/test2" element={<Test2 />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
+
+function Home() {
+  return (
+    <div>
+      <h2>Home</h2>
+      <Link to="/test">Go to Test</Link>
     </div>
   );
 }
 
-export default App;
+function Test() {
+  return (
+    <div>
+      <h2>Test</h2>
+      <Link to="/">Go to Home</Link><br />
+      <Link to="/test2">Go to Test2</Link>
+    </div>
+  );
+}
+
+function Test2() {
+  return (
+    <div>
+      <h2>Test2</h2>
+      <Link to="/test">Go to Test</Link>
+    </div>
+  );
+}

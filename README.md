@@ -10,8 +10,6 @@
 | Node.js | v18.12.1 |
 | CDK | 2.84.0 |
 | React | 18.2.0 |
-| Express | 4.18.2 |
-
 
 # インフラ構成図
 
@@ -26,4 +24,12 @@ B --> C[S3バケットにIAMポリシーを追加]
 C --> D[CloudFrontディストリビューションの作成]
 D --> E[CloudFrontのURLを出力]
 E --> F[処理終了]
+```
+
+# 起動方法
+
+```
+sh create-cloudfront-s3.sh
+または
+create-cloudfront-s3.bat
 ```
